@@ -1,10 +1,14 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { encryptText, decryptText, encryptBuffer, decryptBuffer } from '../lib/crypto';
+import { loadEnvConfig } from '@next/env';
+
+// Load environment variables from .env files (same way Next.js does)
+loadEnvConfig(process.cwd());
 
 describe('Crypto Utility Tests', () => {
   beforeAll(() => {
     if (!process.env.ENCRYPTION_KEY) {
-      process.env.ENCRYPTION_KEY = 'test-encryption-key-for-unit-testing-32-chars';
+      throw new Error('ENCRYPTION_KEY environment variable is missing.');
     }
   });
 

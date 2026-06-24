@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import path from 'path';
 import fs from 'fs';
+import { loadEnvConfig } from '@next/env';
+
+// Load environment variables from .env files (same way Next.js does)
+loadEnvConfig(process.cwd());
 
 const testDbDir = path.join(process.cwd(), 'data-test');
 
@@ -12,7 +16,7 @@ describe('Database CRUD operations', () => {
     process.env.DB_DIR = testDbDir;
     process.env.DB_PATH = path.join(testDbDir, 'feedback-test.db');
     if (!process.env.ENCRYPTION_KEY) {
-      process.env.ENCRYPTION_KEY = 'test-encryption-key-for-unit-testing-32-chars';
+      throw new Error('ENCRYPTION_KEY environment variable is missing.');
     }
 
     // Clean up database BEFORE importing the module to ensure it's empty
