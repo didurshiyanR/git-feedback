@@ -55,7 +55,7 @@ jobs:
         run: npm run test
         env: 
           ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
-          
+
 
 <!-- set node v -->
         with:
@@ -83,31 +83,53 @@ jobs:
           include-hidden-files: true
           retention-days: 1 
 
-
 <!-- Test -->
-  # test:
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v6
 
-  #     - name: Set up Node.js
-  #       uses: actions/setup-node@v6
-  #       with:
-  #         node-version: '22'
-  #         cache: 'npm'
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps :
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
-  #     - name: Install dependencies
-  #       run: npm ci
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build
+          path: .next
+      
+      - name: Run unit tests
+        run: npm run test
+        env: 
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
 
-  #     - name: Download build artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: next-build
-  #         path: .next
+<!-- security audit -->
 
-  #     - name: Run unit tests
-  #       run: npm run test
-  #       env:
-  #         ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+
+  security-audit:
+    runs-on: ubuntu-latest
+    needs: test
+    steps :
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run security audit
+        run: npm audit
